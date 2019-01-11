@@ -1,0 +1,134 @@
+drop table SRS_TBL_User_Profile;
+drop table SRS_TBL_User_Credentials;
+drop table SRS_TBL_Passenger;
+drop table SRS_TBL_Reservation;
+drop table SRS_TBL_Schedule;
+drop table SRS_TBL_Ship;
+drop table SRS_TBL_Route;
+drop table srs_tbl_creditcard;
+
+
+drop sequence SRS_SEQ_USER_ID;
+drop sequence SRS_SEQ_ROUTE_ID;
+drop sequence SRS_SEQ_SHIP_ID;
+drop sequence SRS_SEQ_SCHEDULE_ID;
+drop sequence SRS_SEQ_RESERVATION_ID;
+
+
+create table srs_tbl_creditcard(
+CreditCardNumber varchar2(16),
+ValidFrom varchar2(15),
+ValidTo varchar(15),
+Balance Number(5)
+);
+
+
+create table SRS_TBL_Ship(
+ShipId varchar2(6) Primary Key,
+ShipName varchar2(15) Not Null ,
+SeatingCapacity number(4) Not Null ,
+ReservationCapacity number(4) Not Null 
+);
+
+
+create table SRS_TBL_Route(
+RouteId varchar2(8) Primary Key,
+Source varchar2(20) Not Null ,
+Destination varchar2(20) Not Null ,
+TravelDuration varchar2(10) Not Null ,
+Fare number(8) Not Null 
+);
+
+
+create table SRS_TBL_Schedule(
+ScheduleId varchar2(8) Primary Key,
+ShipId varchar2(6) references SRS_TBL_Ship(ShipId),
+RouteId varchar2(8) references SRS_TBL_Route(RouteId),
+StartDate date Not Null 
+);
+
+create table SRS_TBL_User_Credentials(
+UserId varchar2(6) Primary Key,
+Password varchar2(20) not null,
+UserType varchar2(15) default 'C',
+LoginStatus number(1) default 0 
+);
+
+
+create table SRS_TBL_Reservation(
+ReservationId varchar2(6) Primary Key,
+ScheduleId varchar2(8) references SRS_TBL_Schedule(ScheduleId),
+UserId varchar2(6) references SRS_TBL_User_Credentials(UserId),
+BookingDate Date Not Null ,
+JourneyDate date Not Null ,
+NoOfSeats number(2) Not Null ,
+TotalFare number(5) Not Null ,
+BookingStatus varchar2(10)
+);
+
+
+create table SRS_TBL_Passenger(
+ReservationId varchar2(6) references SRS_TBL_Reservation(ReservationId),
+ScheduleId varchar2(8) references SRS_TBL_Schedule(ScheduleId),
+Name varchar2(20) Not Null ,
+Age number(2) Not Null ,
+Gender varchar2(7)
+);
+
+
+
+
+create table SRS_TBL_User_Profile(
+UserId varchar2(6) references SRS_TBL_User_Credentials(UserId),
+FirstName varchar2(20) Not Null ,
+LastName varchar2(20) Not Null ,
+DateOfBirth date Not Null ,
+Gender varchar2(7) Not Null ,
+Street varchar2(30) Not Null ,
+Location varchar2(20)Not Null ,
+City varchar2(20) Not Null ,
+State varchar2(20) Not Null ,
+PinCode varchar2(10) check(length(pincode)=6),
+MobileNo varchar2(10) check(length(mobileno)=10),
+EmailId varchar2(30) Not Null 
+);
+
+
+create sequence SRS_SEQ_USER_ID 
+start with 1000
+increment by 1;
+
+create sequence SRS_SEQ_ROUTE_ID
+start with 1000
+increment by 1;
+
+create sequence SRS_SEQ_SHIP_ID 
+start with 1000
+increment by 1;
+
+create sequence SRS_SEQ_SCHEDULE_ID
+start with 1000
+increment by 1;
+
+create sequence SRS_SEQ_RESERVATION_ID
+start with 1000
+increment by 1;
+
+
+
+insert into srs_tbl_user_credentials values('ADMIN','admin','A',0);
+
+
+alter table srs_tbl_reservation drop column userid;
+alter table SRS_TBL_RESERVATION add CreditCardNumber varchar2(16);
+
+insert into srs_tbl_creditcard values(
+'HDFCBANK12345678','2016','2026',10000
+);
+
+commit;
+commit;
+
+
+
+
